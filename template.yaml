@@ -22,9 +22,9 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: AddEventFunction
-      Description: Create an event
+      Description: Get projects
       CodeUri: projects/
-      Handler: get_projects.lambda_handler
+      Handler: get_projects.get_projects_handler
       Runtime: python3.9
       Architectures:
         - x86_64

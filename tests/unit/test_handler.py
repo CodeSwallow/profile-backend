@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from projects import app
+from projects import get_projects
 
 
 @pytest.fixture()
