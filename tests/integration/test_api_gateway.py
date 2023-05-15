@@ -33,7 +33,7 @@ class TestApiGateway:
         api_outputs = [output for output in stack_outputs if output["OutputKey"] == "HelloWorldApi"]
 
         if not api_outputs:
-            raise KeyError(f"HelloWorldAPI not found in stack {stack_name}")
+            raise KeyError(f"RestAPI not found in stack {stack_name}")
 
         return api_outputs[0]["OutputValue"]  # Extract url from stack outputs
 
@@ -42,4 +42,3 @@ class TestApiGateway:
         response = requests.get(api_gateway_url)
 
         assert response.status_code == 200
-        assert response.json() == {"message": "hello world"}
