@@ -26,7 +26,7 @@ def get_project_handler(event, context):
             raise Exception('Table name missing')
 
         try:
-            project_id = event['pathParameters']['id']
+            project_id = event['pathParameters']['project_id']
         except KeyError as error:
             logger.info('Error: {}'.format(error))
 
@@ -38,11 +38,10 @@ def get_project_handler(event, context):
         dynamodb = boto3.resource('dynamodb')
         table = dynamodb.Table(table_name)
 
-        item = table.scan(
-            FilterExpression='pk = :pk AND sk = :sk',
-            ExpressionAttributeValues={
-                ':pk': partition_key,
-                ':sk': project_id
+        item = table.get_item(
+            Key={
+                'pk': partition_key,
+                'sk': project_id
             }
         )
 
@@ -50,7 +49,7 @@ def get_project_handler(event, context):
 
         return {
             'statusCode': 200,
-            'body': json.dumps(item['Items'][0])
+            'body': json.dumps(item['Item'])
         }
 
     except Exception as error:
