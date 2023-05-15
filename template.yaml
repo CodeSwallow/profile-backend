@@ -36,6 +36,24 @@ Resources:
             Path: /projects
             Method: get
 
+  ProjectsTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: ProfileBackend-Projects
+      PrimaryKey:
+        Name: id
+        Type: String
+
+  GetProjectsFunctionToProjectsTable:
+    Type: AWS::Serverless::Connector
+    Properties:
+      Source:
+        Id: GetProjectsFunction
+      Destination:
+        Id: ProjectsTable
+      Permissions:
+        - Read
+
 Outputs:
   ProfileBackendApi:
     Description: "API Gateway endpoint URL for dev stage for Profile Backend"
