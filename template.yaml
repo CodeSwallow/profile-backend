@@ -21,13 +21,16 @@ Resources:
   GetProjectsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: AddEventFunction
+      FunctionName: GetProjectsFunction
       Description: Get projects
       CodeUri: projects/
       Handler: get_projects.get_projects_handler
       Runtime: python3.9
       Architectures:
         - x86_64
+      Environment:
+        Variables:
+          PROJECTS_TABLE: !Ref ProjectsTable
       Events:
         GetProjectsApiEvent:
           Type: Api
