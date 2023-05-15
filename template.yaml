@@ -11,22 +11,32 @@ Globals:
     MemorySize: 128
 
 Resources:
+  RestAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: ProfileBackend
+      Description: Rest API for Profile Backend
+      StageName: dev
+
   GetProjectsFunction:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: AddEventFunction
+      Description: Create an event
       CodeUri: projects/
-      Handler: app.lambda_handler
+      Handler: get_projects.lambda_handler
       Runtime: python3.9
       Architectures:
         - x86_64
       Events:
-        HelloWorld:
+        GetProjectsApiEvent:
           Type: Api
           Properties:
+            RestApiId: !Ref RestAPI
             Path: /projects
             Method: get
 
 Outputs:
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Profile Backend"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/dev/"
+  ProfileBackendApi:
+    Description: "API Gateway endpoint URL for dev stage for Profile Backend"
+    Value: !Sub "https://${RestAPI}.execute-api.${AWS::Region}.amazonaws.com/dev/"
