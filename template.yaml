@@ -22,7 +22,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: GetProjectsFunction
-      Description: Get projects
+      Description: Get all projects
       CodeUri: projects/
       Handler: get_projects.get_projects_handler
       Runtime: python3.9
@@ -39,12 +39,33 @@ Resources:
             Path: /projects
             Method: get
 
+  GetProjectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: GetProjectFunction
+      Description: Get project by id
+      CodeUri: projects/
+      Handler: get_project.get_project_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          PROJECTS_TABLE: !Ref ProjectsTable
+      Events:
+        GetProjectApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref RestAPI
+            Path: /projects/{project_id}
+            Method: get
+
   ProjectsTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
       TableName: ProfileBackend-Projects
       PrimaryKey:
-        Name: id
+        Name: project_id
         Type: String
 
   GetProjectsFunctionToProjectsTable:
@@ -52,6 +73,16 @@ Resources:
     Properties:
       Source:
         Id: GetProjectsFunction
+      Destination:
+        Id: ProjectsTable
+      Permissions:
+        - Read
+
+  GetProjectFunctionToProjectsTable:
+    Type: AWS::Serverless::Connector
+    Properties:
+      Source:
+        Id: GetProjectFunction
       Destination:
         Id: ProjectsTable
       Permissions:
