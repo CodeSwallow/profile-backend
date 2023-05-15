@@ -30,7 +30,7 @@ Resources:
         - x86_64
       Environment:
         Variables:
-          PROJECTS_TABLE: !Ref ProjectsTable
+          PROFILE_TABLE: !Ref ProfileBackendTable
       Events:
         GetProjectsApiEvent:
           Type: Api
@@ -51,7 +51,7 @@ Resources:
         - x86_64
       Environment:
         Variables:
-          PROJECTS_TABLE: !Ref ProjectsTable
+          PROFILE_TABLE: !Ref ProfileBackendTable
       Events:
         GetProjectApiEvent:
           Type: Api
@@ -60,13 +60,23 @@ Resources:
             Path: /projects/{project_id}
             Method: get
 
-  ProjectsTable:
-    Type: AWS::Serverless::SimpleTable
+  ProfileBackendTable:
+    Type: AWS::DynamoDB::Table
     Properties:
-      TableName: ProfileBackend-Projects
-      PrimaryKey:
-        Name: project_id
-        Type: String
+      TableName: ProfileBackendTable
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+        - AttributeName: sk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+        - AttributeName: sk
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
 
   GetProjectsFunctionToProjectsTable:
     Type: AWS::Serverless::Connector
@@ -74,7 +84,7 @@ Resources:
       Source:
         Id: GetProjectsFunction
       Destination:
-        Id: ProjectsTable
+        Id: ProfileBackendTable
       Permissions:
         - Read
 
@@ -84,7 +94,7 @@ Resources:
       Source:
         Id: GetProjectFunction
       Destination:
-        Id: ProjectsTable
+        Id: ProfileBackendTable
       Permissions:
         - Read
 

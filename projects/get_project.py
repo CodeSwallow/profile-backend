@@ -16,11 +16,12 @@ def get_project_handler(event, context):
     :param context: The runtime information of the Lambda function.
     :return: A dictionary containing the response data.
     """
+    partition_key = 'project'
 
     try:
         logger.info("Event: {}".format(event))
 
-        table_name = os.getenv('PROJECTS_TABLE')
+        table_name = os.getenv('PROFILE_TABLE')
         if not table_name:
             raise Exception('Table name missing')
 
@@ -38,9 +39,10 @@ def get_project_handler(event, context):
         table = dynamodb.Table(table_name)
 
         item = table.scan(
-            FilterExpression='project_id = :project_id',
+            FilterExpression='pk = :pk AND sk = :sk',
             ExpressionAttributeValues={
-                ':project_id': project_id
+                ':pk': partition_key,
+                ':sk': project_id
             }
         )
 
